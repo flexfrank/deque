@@ -11,11 +11,28 @@ begin
     gem.homepage = "http://github.com/flexfrank/deque"
     gem.authors = ["Shumpei Akai"]
     gem.add_development_dependency "minitest", ">= 0"
+    gem.extensions << 'ext/extconf.rb'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+end
+
+file "ext/Makefile" =>["ext/extconf.rb"] do
+  Dir.chdir("ext") do
+    ruby "extconf.rb"
+  end
+end
+
+task :compile => ["ext/Makefile"] do
+  Dir.chdir("ext") do
+    sh "make"
+  end
+end
+
+task :benchmark do
+  ruby "benchmark/benchmark.rb"
 end
 
 require 'rake/testtask'

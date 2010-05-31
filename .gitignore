@@ -5,6 +5,8 @@
 *.tmproj
 tmtags
 
+
+
 ## EMACS
 *~
 \#*
@@ -19,3 +21,6 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
+ext/Makefile
+*.bundle
+*.o
