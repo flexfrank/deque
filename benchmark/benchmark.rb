@@ -1,12 +1,24 @@
 require "benchmark"
 require_relative "../lib/deque"
-
+=begin
+require 'algorithms'
+module Containers
+class Containers::Deque
+  alias push push_back
+  alias pop pop_back
+  alias shift pop_front
+  alias unshift push_front
+  def [](a)
+  end
+end
+=end
 o=Deque.new
 #o=RList.new
 #o=[]
+#o=Containers::Deque.new
 
 
-TIMES=1000000
+TIMES=10000000
 
 
 Benchmark.bm do|b|

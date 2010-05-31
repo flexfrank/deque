@@ -17,6 +17,7 @@ deque_free(void* deque){
   deque_t* d=deque;
   d->first=Qnil;
   d->last=Qnil;
+  free(d);
 }
 
 #define INIT_SIZE 64
