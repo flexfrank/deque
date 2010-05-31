@@ -442,24 +442,24 @@ static VALUE rdeque_aref(int argc, VALUE* argv, VALUE self){
 static VALUE
 deque_hash_recursive(VALUE obj,VALUE arg,int rec){
   deque_t* d;
-  st_index_t h;
+  long h;
 
   Data_Get_Struct(obj,deque_t,d);
 
-  h=rb_hash_start(deque_size(d));
-  h=rb_hash_uint(h,NUM2LONG(rb_hash(deque_class)));
+  h=NUM2LONG(rb_hash(deque_class));
   if(rec){
-    h=rb_hash_uint(h,NUM2LONG(rb_hash(deque_class)));
+    h+=rb_hash(deque_class);
   }else{
-    long i;
+    long i,c=0;
     for(i=RARRAY_LEN(d->first)-1;i>=0;i--){
-      h=rb_hash_uint(h,NUM2LONG(rb_hash(RARRAY_PTR(d->first)[i])));
+      h+=NUM2LONG(rb_hash(RARRAY_PTR(d->first)[i]))*c;
+      c++;
     }
     for(i=0;i<RARRAY_LEN(d->last);i++){
-      h=rb_hash_uint(h,NUM2LONG(rb_hash(RARRAY_PTR(d->last)[i])));
+      h+=NUM2LONG(rb_hash(RARRAY_PTR(d->last)[i]))*c;
+      c++;
     }
   }
-  h=rb_hash_end(h);
   return LONG2FIX(h);
 
 }
