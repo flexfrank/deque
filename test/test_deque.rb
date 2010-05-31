@@ -270,9 +270,13 @@ class TestDeque < MiniTest::Unit::TestCase
     e=Deque.new
     o1=["a",1,[2],Object.new]
     o2=[3.9,10,"fff",:a]
+    d.add_first(0)
+    e.add_last(0)
     o1.each{|i| d.add_first(i);e.add_first(i)}
     o2.each{|i| d.add_last(i);e.add_last(i)}
+    
 
+    assert_equal(d.to_a,e.to_a)
     assert_equal(d.hash,e.hash)
     d.remove_last
     assert(d.hash!=e.hash)
@@ -283,5 +287,48 @@ class TestDeque < MiniTest::Unit::TestCase
     @d.add_last(1)
     @d.add_first([@d])
     assert_block{@d.hash}
+  end
+  def test_dup
+   @d.add_first(0)
+   @d.add_last(:a)
+   d=@d.dup
+   assert(d.object_id != @d.object_id)
+   assert_equal(@d.to_a,d.to_a)
+   @d.add_last("f")
+   assert(:a,d.pop)
+  end
+  def test_to_a
+    @d.add_first(-1)
+    @d.add_first(-2)
+    @d.add_first(-3)
+    @d.add_first(-4)
+    @d.add_last(0)
+    @d.add_last(1)
+    @d.add_last(2)
+    @d.add_last(3)
+    @d.add_last(4)
+    assert_equal([-4,-3,-2,-1,0,1,2,3,4],@d.to_a)
+  end
+
+  def test_equal
+    @d.add_first(-1)
+    @d.add_first(-2)
+    @d.add_last(0)
+    @d.add_last(1)
+    
+    d=@d.dup
+    assert(@d==@d)
+    assert(@d==d,[@d.to_a,d.to_a])
+
+    e=Deque.new
+    e.add_first(-2)
+    e.add_last(-1)
+    e.add_last(0)
+    e.add_last(1)
+    assert(@d==e)
+
+    @d.add(e)
+    e.add(@d)
+    assert(@d==e)
   end
 end

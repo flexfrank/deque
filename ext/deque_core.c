@@ -470,6 +470,64 @@ rdeque_hash(VALUE self)
   return rb_exec_recursive(deque_hash_recursive,self,Qnil);
 }
 
+static VALUE
+rdeque_dup(VALUE self){
+  deque_t* d;
+  Data_Get_Struct(self,deque_t,d);
+  return deque_with_arrays(d->first,d->last);
+}
+
+static VALUE
+deque_to_a(deque_t* d){
+  VALUE r=rb_ary_reverse(rb_ary_dup(d->first));
+  rb_ary_concat(r,d->last);
+  return r;
+}
+
+static VALUE
+rdeque_to_a(VALUE self){
+  deque_t* d;
+  Data_Get_Struct(self,deque_t,d);
+  return deque_to_a(d);
+}
+
+static VALUE
+deque_equal_rec(VALUE deq1,VALUE deq2,int rec){
+  long i;
+
+  if(rec) return Qtrue;
+  deque_t *d1,*d2;
+  Data_Get_Struct(deq1,deque_t,d1);
+  Data_Get_Struct(deq1,deque_t,d2);
+  for(i=0;i<deque_size(d1) && i<deque_size(d2);i++){
+    if(!rb_equal(deque_at(d1,i),deque_at(d2,i))){
+      return Qfalse;
+    }
+  }
+  return deque_size(d1)==deque_size(d2);
+}
+
+static VALUE
+rdeque_equal(VALUE self,VALUE another){
+  if(self==another) return Qtrue;
+  if(deque_class==rb_obj_class(another)){
+    deque_t *d,*a;
+    Data_Get_Struct(self,deque_t,d);
+    Data_Get_Struct(another,deque_t,a);
+    if(deque_size(d)==deque_size(a)){
+      return rb_exec_recursive_paired(deque_equal_rec,self, another, another);
+    }else{
+      return Qfalse;
+    }
+  }else{
+    return Qfalse;
+  }
+
+  
+
+}
+
+
 
 void
 Init_deque_core(void){
@@ -491,4 +549,9 @@ Init_deque_core(void){
   rb_define_method(dequeClass, "[]",rdeque_aref,-1);
   rb_define_method(dequeClass, "[]=",rdeque_aset,-1);
   rb_define_method(dequeClass, "hash",rdeque_hash,0);
+  rb_define_method(dequeClass, "dup",rdeque_dup,0);
+  rb_define_method(dequeClass, "to_a",rdeque_to_a,0);
+  rb_define_method(dequeClass, "==",rdeque_equal,1);
+  
+
 }
