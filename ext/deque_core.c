@@ -589,6 +589,24 @@ rdeque_last(int argc,VALUE* argv,VALUE self){
   }
 }
 
+static void
+deque_concat(deque_t* d,VALUE ary){
+  rb_ary_concat(d->last,ary);
+}
+
+static VALUE
+rdeque_concat(VALUE self,VALUE ary){
+  deque_t *d;
+  Data_Get_Struct(self,deque_t,d);
+  if(rb_obj_class(ary)==deque_class){
+    deque_t* d2;
+    Data_Get_Struct(ary,deque_t,d2);
+    ary=deque_to_a(d2);
+  }
+  deque_concat(d,ary);
+  return self;
+}
+
 void
 Init_deque_core(void){
   VALUE dequeClass=rb_define_class("Deque",rb_cObject);
@@ -612,8 +630,8 @@ Init_deque_core(void){
   rb_define_method(dequeClass, "dup",rdeque_dup,0);
   rb_define_method(dequeClass, "to_a",rdeque_to_a,0);
   rb_define_method(dequeClass, "==",rdeque_equal,1);
+  rb_define_method(dequeClass, "concat",rdeque_concat,1);
   rb_define_method(dequeClass, "first",rdeque_first,-1);
   rb_define_method(dequeClass, "last",rdeque_last,-1);
-  
 
 }

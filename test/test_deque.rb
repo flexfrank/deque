@@ -361,4 +361,16 @@ class TestDeque < MiniTest::Unit::TestCase
     assert_equal([],@d.last(0).to_a)
   end
 
+  def test_concat
+   @d.add_first(0)
+   e=Deque.new
+   e.add_first -1
+   e.add_last -2
+    
+   @d.concat([:a,:b])
+   assert_equal([0,:a,:b],@d.to_a)
+   @d.concat(e)
+   assert_equal([0,:a,:b,-1,-2],@d.to_a)
+  end
+
 end
