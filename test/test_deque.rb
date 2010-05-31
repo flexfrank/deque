@@ -378,5 +378,15 @@ class TestDeque < MiniTest::Unit::TestCase
     assert_equal([:a,"b"],Deque.new([:a,"b"]).to_a)
     assert_equal([1,2],Deque.new(1..2).to_a)
   end
+  def test_empty?
+    assert_equal(true,@d.empty?)
+    @d.add_first 1
+    assert_equal(false,@d.empty?)
+    @d.clear
+    assert_equal(true,@d.empty?)
+    @d.add_last 2
+    assert_equal(false,@d.empty?)
+
+  end
 
 end

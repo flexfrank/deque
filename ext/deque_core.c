@@ -607,6 +607,11 @@ rdeque_concat(VALUE self,VALUE ary){
   return self;
 }
 
+static VALUE rdeque_is_empty(VALUE self){
+  deque_t* d;
+  Data_Get_Struct(self,deque_t,d);
+  return deque_size(d)==0 ? Qtrue : Qfalse;
+}
 void
 Init_deque_core(void){
   VALUE dequeClass=rb_define_class("Deque",rb_cObject);
@@ -618,6 +623,7 @@ Init_deque_core(void){
   rb_define_method(dequeClass, "remove_first", rdeque_remove_first, 0);
   rb_define_method(dequeClass, "remove_last", rdeque_remove_last, 0);
   rb_define_method(dequeClass, "size", rdeque_size, 0);
+  rb_define_method(dequeClass, "empty?", rdeque_is_empty, 0);
   rb_define_method(dequeClass, "length", rdeque_size, 0);
   rb_define_method(dequeClass, "debug", rdeque_debug, 0);
   rb_define_method(dequeClass, "at", rdeque_at, 1);
