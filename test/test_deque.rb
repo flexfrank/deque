@@ -187,6 +187,7 @@ class TestDeque < MiniTest::Unit::TestCase
     assert_equal([-2,-1,0,1,2],@d[1,8].to_a)
     assert_equal([2],@d[-1,1].to_a)
     assert_equal([1,2],@d[-2,2].to_a)
+    assert_equal([],@d[0,0].to_a)
   end
 
   def test_range_slice
@@ -331,4 +332,33 @@ class TestDeque < MiniTest::Unit::TestCase
     e.add(@d)
     assert(@d==e)
   end
+  def test_first
+    @d.add_first(1)
+    assert_equal(1,@d.first)
+    @d.clear
+    @d.add_last(2)
+    assert_equal(2,@d.first)
+
+    @d.add_last(3)
+    @d.add_first(1)
+    assert_equal([1,2,3],@d.first(3).to_a)
+    assert_equal([1,2],@d.first(2).to_a)
+    assert_equal([1],@d.first(1).to_a)
+    assert_equal([],@d.first(0).to_a)
+  end
+  def test_last
+    @d.add_first(1)
+    assert_equal(1,@d.last)
+    @d.clear
+    @d.add_last(2)
+    assert_equal(2,@d.last)
+
+    @d.add_last(3)
+    @d.add_first(1)
+    assert_equal([1,2,3],@d.last(3).to_a)
+    assert_equal([2,3],@d.last(2).to_a)
+    assert_equal([3],@d.last(1).to_a)
+    assert_equal([],@d.last(0).to_a)
+  end
+
 end

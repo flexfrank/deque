@@ -320,6 +320,7 @@ deque_last_range(deque_t* d, size_t beg,size_t len,size_t* rbeg,size_t* rlen){
 
 static VALUE deque_first_slice(deque_t* d, size_t beg, size_t len){
   size_t rbeg,rlen;
+  if(len==0)return rb_ary_new();
     
   deque_first_range(d,beg,len,&rbeg,&rlen);
   if(rlen>0){
@@ -332,6 +333,7 @@ static VALUE deque_first_slice(deque_t* d, size_t beg, size_t len){
 
 static VALUE deque_last_slice(deque_t* d, size_t beg, size_t len){
   size_t rbeg,rlen;
+  if(len==0)return rb_ary_new();
   deque_last_range(d,beg,len,&rbeg,&rlen);
   if(rlen>0){
     return rb_ary_subseq(d->last,rbeg,rlen);
@@ -522,12 +524,70 @@ rdeque_equal(VALUE self,VALUE another){
   }else{
     return Qfalse;
   }
+}
 
-  
+static VALUE
+deque_first(deque_t* d){
+  long flen=RARRAY_LEN(d->first);
+  if(flen>0){
+    return RARRAY_PTR(d->first)[flen-1];
+  }else{
+    if(RARRAY_LEN(d->last)>0){
+      return RARRAY_PTR(d->last)[0];
+    }else{
+      return Qnil;
+    }
+  }
+}
 
+static VALUE
+deque_last(deque_t* d){
+  long llen=RARRAY_LEN(d->last);
+  if(llen>0){
+    return RARRAY_PTR(d->last)[llen-1];
+  }else{
+    if(RARRAY_LEN(d->first)>0){
+      return RARRAY_PTR(d->first)[0];
+    }else{
+      return Qnil;
+    }
+  }
 }
 
 
+static VALUE
+rdeque_first(int argc,VALUE* argv,VALUE self){
+  deque_t* d;
+  Data_Get_Struct(self,deque_t, d);
+  if(argc==0){
+    return deque_first(d);
+  }else if(argc==1){
+    long len=NUM2LONG(argv[0]);
+    if(len>=0){
+      return deque_subseq(d,0,len);
+    }
+    rb_raise(rb_eArgError,"negative size");
+  }else{
+    rb_raise(rb_eArgError,"wrong number of arguments (%d for 0..1)",argc);
+  }
+}
+
+static VALUE
+rdeque_last(int argc,VALUE* argv,VALUE self){
+  deque_t* d;
+  Data_Get_Struct(self,deque_t, d);
+  if(argc==0){
+    return deque_last(d);
+  }else if(argc==1){
+    long len=NUM2LONG(argv[0]);
+    if(len>=0){
+      return deque_subseq(d,deque_size(d)-len,len);
+    }
+    rb_raise(rb_eArgError,"negative size");
+  }else{
+    rb_raise(rb_eArgError,"wrong number of arguments (%d for 0..1)",argc);
+  }
+}
 
 void
 Init_deque_core(void){
@@ -552,6 +612,8 @@ Init_deque_core(void){
   rb_define_method(dequeClass, "dup",rdeque_dup,0);
   rb_define_method(dequeClass, "to_a",rdeque_to_a,0);
   rb_define_method(dequeClass, "==",rdeque_equal,1);
+  rb_define_method(dequeClass, "first",rdeque_first,-1);
+  rb_define_method(dequeClass, "last",rdeque_last,-1);
   
 
 }
