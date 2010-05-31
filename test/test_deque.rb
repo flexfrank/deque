@@ -373,4 +373,10 @@ class TestDeque < MiniTest::Unit::TestCase
    assert_equal([0,:a,:b,-1,-2],@d.to_a)
   end
 
+  def test_new
+    assert_equal([],Deque.new.to_a)
+    assert_equal([:a,"b"],Deque.new([:a,"b"]).to_a)
+    assert_equal([1,2],Deque.new(1..2).to_a)
+  end
+
 end
