@@ -99,65 +99,50 @@ static void deque_balance(VALUE* from,VALUE* to){
 
 static void
 deque_balance_first(deque_t* d){
-/*
-  size_t llen=RARRAY_LEN(d->last);
-  size_t next_first_size=llen/2;
-  size_t next_last_size=llen-next_first_size;
-  d->first=rb_ary_reverse(rb_ary_subseq(d->last,0,next_first_size));
-
-  d->last=rb_ary_subseq(d->last,next_first_size,next_last_size);
-*/
   deque_balance(&d->last,&d->first);
 }
 static void
 deque_balance_last(deque_t* d){
-  /*size_t flen=RARRAY_LEN(d->first);
-  size_t next_last_size=flen/2;
-  size_t next_first_size=flen-next_last_size;
-  
-  d->last=rb_ary_reverse(rb_ary_subseq(d->first,0,next_last_size));
-
-  d->first=rb_ary_subseq(d->first,next_last_size,next_first_size);
-*/
-  deque_balance(&d->first,&d->last);
+    deque_balance(&d->first,&d->last);
 }
 
 
 static VALUE
 deque_remove_first(deque_t* d){
   size_t flen=RARRAY_LEN(d->first);
-  size_t llen=RARRAY_LEN(d->last);
   if(flen== 0){
-    if(llen==0){
+    size_t llen=RARRAY_LEN(d->last);
+    switch(llen){
+    case 0:
       return Qnil;
-    }else if(llen==1){
+    case 1:
       return rb_ary_pop(d->last);
-    }else if( llen> 1){
+    default:
       deque_balance_first(d);
+      return rb_ary_pop(d->first);
     }
-
+  }else{
+    return rb_ary_pop(d->first);
   }
-    
-
-  return rb_ary_pop(d->first);
 }
 
 static VALUE
 deque_remove_last(deque_t* d){
-  size_t flen=RARRAY_LEN(d->first);
   size_t llen=RARRAY_LEN(d->last);
   if(llen==0){
-
-    if(flen==0){
+    size_t flen=RARRAY_LEN(d->first);
+    switch(flen){
+    case 0:
       return Qnil;
-    }else if(flen==1){
+    case 1:
       return rb_ary_pop(d->first);
-    }else if(flen>1){
+    default:
       deque_balance_last(d);
+      return rb_ary_pop(d->last);
     }
+  }else{
+    return rb_ary_pop(d->last);
   }
-
-  return rb_ary_pop(d->last);
 }
 
 static VALUE

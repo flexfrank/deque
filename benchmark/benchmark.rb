@@ -1,8 +1,8 @@
 require "benchmark"
 require_relative "../lib/deque"
-=begin
+begin
 require 'algorithms'
-module Containers
+module Containers end
 class Containers::Deque
   alias push push_back
   alias pop pop_back
@@ -11,7 +11,7 @@ class Containers::Deque
   def [](a)
   end
 end
-=end
+end
 o=Deque.new
 #o=RList.new
 #o=[]
