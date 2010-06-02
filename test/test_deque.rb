@@ -114,6 +114,9 @@ class TestDeque < MiniTest::Unit::TestCase
     assert_equal(1,@d.at(-3))
     assert_equal(2,@d.at(-2))
     assert_equal(3,@d.at(-1))
+    assert_raises(IndexError){
+      @d.at(-5)
+    }
   end
 
   def test_get    
@@ -149,6 +152,9 @@ class TestDeque < MiniTest::Unit::TestCase
     assert_equal(nil,@d.at(2))
     assert_equal(nil,@d.at(3))
     assert_equal([],@d.at(4))
+    assert_raises(IndexError){
+      @d.store(-6,1)
+    }
   end
 
   def test_each

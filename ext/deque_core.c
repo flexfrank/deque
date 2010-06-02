@@ -89,27 +89,37 @@ deque_add_last(deque_t* d,VALUE obj){
   rb_ary_push(d->last,obj);
 }
 
+static void deque_balance(VALUE* from,VALUE* to){
+  size_t len=RARRAY_LEN(*from);
+  size_t next_to_size=len/2;
+  size_t next_from_size=len-next_to_size;
+  *to=rb_ary_reverse(rb_ary_subseq(*from,0,next_to_size));
+  *from=rb_ary_subseq(*from,next_to_size,next_from_size);
+}
+
 static void
 deque_balance_first(deque_t* d){
-
+/*
   size_t llen=RARRAY_LEN(d->last);
   size_t next_first_size=llen/2;
   size_t next_last_size=llen-next_first_size;
   d->first=rb_ary_reverse(rb_ary_subseq(d->last,0,next_first_size));
 
   d->last=rb_ary_subseq(d->last,next_first_size,next_last_size);
-
+*/
+  deque_balance(&d->last,&d->first);
 }
 static void
 deque_balance_last(deque_t* d){
-  size_t flen=RARRAY_LEN(d->first);
+  /*size_t flen=RARRAY_LEN(d->first);
   size_t next_last_size=flen/2;
   size_t next_first_size=flen-next_last_size;
   
   d->last=rb_ary_reverse(rb_ary_subseq(d->first,0,next_last_size));
 
   d->first=rb_ary_subseq(d->first,next_last_size,next_first_size);
-
+*/
+  deque_balance(&d->first,&d->last);
 }
 
 
@@ -216,6 +226,10 @@ static VALUE deque_at(deque_t* d, size_t i){
 static VALUE deque_entry(deque_t* d,long i){
   if(i<0){
     i+=deque_size(d);
+    if(i<0){
+      rb_raise(rb_eIndexError, "index %ld out of array",
+                     i - deque_size(d));
+    }
   }
   return deque_at(d,i);
 }
@@ -235,7 +249,13 @@ static void deque_store_at(deque_t* d, size_t i, VALUE obj){
   rb_ary_store(ary,index,obj);
 }
 static void deque_store(deque_t* d, long i, VALUE obj){
-  if(i<0){i+=deque_size(d);}
+  if(i<0){
+    i+=deque_size(d);
+    if(i<0){
+      rb_raise(rb_eIndexError, "index %ld out of array",
+                     i - deque_size(d));
+    }
+  }
   deque_store_at(d,i,obj);
 }
 
