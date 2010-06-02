@@ -15,13 +15,22 @@ end
 o=Deque.new
 #o=RList.new
 #o=[]
-o=Containers::CDeque.new
+#o=Containers::CDeque.new
 
 
 TIMES=8000000
 
 
 Benchmark.bm do|b|
+  if(o.respond_to?(:<<))
+    b.report("<<") do
+      TIMES.times do|i|
+        o <<  i
+      end
+    end
+    o.clear
+  end
+ 
   b.report("push1") do
     TIMES.times do|i|
       o.push(i)

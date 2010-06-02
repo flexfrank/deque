@@ -21,6 +21,16 @@ class TestDeque < MiniTest::Unit::TestCase
     assert_equal(0,@d.remove_last)
     assert_equal(nil,@d.remove_last)
   end
+  def test_push
+    @d.add_last(0)
+    @d.push(1,2,3)
+    assert_equal(3,@d.pop)
+    assert_equal(2,@d.pop)
+    assert_equal(1,@d.pop)
+    assert_equal(0,@d.pop)
+    assert_equal(nil,@d.pop)
+
+  end
 
   def test_deque_last_first
     @d.add_last(0)
@@ -30,6 +40,11 @@ class TestDeque < MiniTest::Unit::TestCase
     assert_equal(1,@d.remove_first)
     assert_equal(2,@d.remove_first)
     assert_equal(nil,@d.remove_first)
+  end
+  def test_unshift
+    @d.add_first(0)
+    @d.unshift(1,2,3)
+    assert_equal([1,2,3,0],@d.to_a)
   end
 
 

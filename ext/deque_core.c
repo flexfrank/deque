@@ -89,6 +89,37 @@ deque_add_last(deque_t* d,VALUE obj){
   rb_ary_push(d->last,obj);
 }
 
+static VALUE
+rdeque_push(int argc, VALUE* argv, VALUE self){
+  deque_t* d;
+  int i;
+  Data_Get_Struct(self,deque_t,d);
+  
+  if(argc==1){
+    deque_add_last(d,argv[0]);
+  }else if(argc>1){
+    for(i=0;i<argc;i++){
+      deque_add_last(d,argv[i]);
+    }
+  }
+  return self;
+}
+
+static VALUE
+rdeque_unshift(int argc, VALUE* argv, VALUE self){
+  deque_t* d;
+  int i;
+  Data_Get_Struct(self,deque_t,d);
+  if(argc==1){
+    deque_add_first(d,argv[0]);
+  }else if(argc>1){
+    for(i=argc-1;i>=0;i--){
+      deque_add_first(d,argv[i]);
+    }
+  }
+  return self;
+}
+
 static void deque_balance(VALUE* from,VALUE* to){
   size_t len=RARRAY_LEN(*from);
   size_t next_to_size=len/2;
@@ -625,7 +656,9 @@ Init_deque_core(void){
   rb_define_alloc_func(dequeClass, deque_alloc);
   //rb_define_private_method(dequeClass, "initialize", rdeque_init, 0);
   rb_define_method(dequeClass, "add_last", rdeque_add_last, 1);
+  rb_define_method(dequeClass, "push", rdeque_push, -1);
   rb_define_method(dequeClass, "add_first", rdeque_add_first, 1);
+  rb_define_method(dequeClass, "unshift", rdeque_unshift, -1);
   rb_define_method(dequeClass, "remove_first", rdeque_remove_first, 0);
   rb_define_method(dequeClass, "remove_last", rdeque_remove_last, 0);
   rb_define_method(dequeClass, "size", rdeque_size, 0);
