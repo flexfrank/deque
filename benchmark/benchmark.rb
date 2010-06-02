@@ -1,9 +1,9 @@
 require "benchmark"
 require_relative "../lib/deque"
 begin
-require 'algorithms'
+require_relative '../ext/CDeque.so'
 module Containers end
-class Containers::Deque
+class Containers::CDeque
   alias push push_back
   alias pop pop_back
   alias shift pop_front
@@ -15,10 +15,10 @@ end
 o=Deque.new
 #o=RList.new
 #o=[]
-#o=Containers::Deque.new
+o=Containers::CDeque.new
 
 
-TIMES=10000000
+TIMES=8000000
 
 
 Benchmark.bm do|b|
@@ -28,7 +28,7 @@ Benchmark.bm do|b|
     end
   end
   b.report("shift1") do
-    while o.size>0
+    o.size.times do
       o.shift
     end
   end
@@ -42,20 +42,35 @@ Benchmark.bm do|b|
   end
   o.clear
 
-
-
-  TIMES.times do|i|
-    o.push i
+  srand(32057203)
+  TIMES.times{|i|o.push i}
+  b.report("shiftpop") do
+    o.size.times do
+      if rand(2)%2==0
+        o.shift
+      else
+        o.pop
+      end
+    end
   end
+
+  TIMES.times{|i|o.push i}
   o.shift
   b.report("at") do
     TIMES.times do|i|
       o[i]
     end
   end
-  while o.size>0
-    o.pop
+  b.report("each") do
+    x=nil
+    o.each do|i|
+      x=i
+    end
+  end 
+  b.report("to_a") do
+    o.to_a[-1]=-1
   end
+  o.clear
 
   b.report("unshift1") do
     TIMES.times do|i|
@@ -63,7 +78,7 @@ Benchmark.bm do|b|
     end
   end
   b.report("pop1") do
-    while o.size>0
+    o.size.times do
       o.pop
     end
   end

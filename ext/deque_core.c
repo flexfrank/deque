@@ -175,7 +175,7 @@ rdeque_remove_last(VALUE self){
   return deque_remove_last(d);
 }
 
-static size_t
+static inline size_t
 deque_size(deque_t* d){
   return RARRAY_LEN(d->first)+RARRAY_LEN(d->last);
 }
