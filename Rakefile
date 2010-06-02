@@ -42,6 +42,7 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
+
 begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |test|
@@ -57,7 +58,7 @@ end
 
 task :test => :check_dependencies
 
-task :default => :test
+task :default => [:compile,:test]
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
